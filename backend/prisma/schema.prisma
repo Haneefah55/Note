@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  //url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model User {
+	id								String			@id					@default(cuid())
+	username					String		@unique
+	email							String		@unique
+	password					String		
+	verificationToken	String?
+	resetToken 				String?
+	createdAt					DateTime		@default(now())
+	isVerified				Boolean		@default(false)
+	notes							Note[]
+	updatedAt					DateTime		@updatedAt
+
+
+	@@index([email, id, username])
+}
+
+
+model Note {
+	id 					String					@id			@default(cuid())
+	title				String			
+	content			String
+	isFavorite	Boolean			@default(false)
+	isArchived	Boolean			@default(false)
+	deletedAt		DateTime?
+	createdAt		DateTime		@default(now())
+	updatedAt		DateTime		@updatedAt
+	userId			String
+	user				User 				@relation(fields: [userId], references: [id])
+
+	
+	tags 				NoteTag[]
+	@@index([title, userId])
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+
+  notes NoteTag[]
+}
+
+model NoteTag {
+  noteId String
+  tagId  String
+
+  note Note @relation(fields: [noteId], references: [id])
+  tag  Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([noteId, tagId])
+}
