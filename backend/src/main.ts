@@ -1,12 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import express from "express"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-  bodyParser: false,
+  rawBody: true,
 });
 
 	app.setGlobalPrefix('api');
+	
 
 	// Configure CORS for credentials/cookies
   /***

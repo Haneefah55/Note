@@ -9,45 +9,48 @@ generator client {
 }
 
 // prisma/schema.prisma
+
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
   //url  	    = env("DATABASE_URL")
   // uncomment next line if you use Prisma <5.10
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
-	id								String			@id					@default(cuid())
-	username					String		@unique
-	email							String		@unique
-	password					String		
-	verificationToken	String?
-	resetToken 				String?
-	createdAt					DateTime		@default(now())
-	isVerified				Boolean		@default(false)
-	notes							Note[]
-	updatedAt					DateTime		@updatedAt
+  id                String   @id @default(cuid())
+  username          String   @unique
+  email             String   @unique
+  password          String
+  createdAt         DateTime @default(now())
+  notes             Note[]
+  updatedAt         DateTime @updatedAt
 
+  name          String
+  emailVerified Boolean   @default(false)
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
 
-	@@index([email, id, username])
+  @@index([email, id, username])
+  @@map("user")
 }
 
-
 model Note {
-	id 					String					@id			@default(cuid())
-	title				String			
-	content			String
-	isFavorite	Boolean			@default(false)
-	isArchived	Boolean			@default(false)
-	deletedAt		DateTime?
-	createdAt		DateTime		@default(now())
-	updatedAt		DateTime		@updatedAt
-	userId			String
-	user				User 				@relation(fields: [userId], references: [id])
+  id         String    @id @default(cuid())
+  title      String
+  content    String
+  isFavorite Boolean   @default(false)
+  isArchived Boolean   @default(false)
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
 
-	
-	tags 				NoteTag[]
-	@@index([title, userId])
+  tags NoteTag[]
+
+  @@index([title, userId])
 }
 
 model Tag {
@@ -65,4 +68,52 @@ model NoteTag {
   tag  Tag  @relation(fields: [tagId], references: [id])
 
   @@id([noteId, tagId])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
