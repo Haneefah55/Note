@@ -19,7 +19,6 @@ datasource db {
 
 model User {
   id                String   @id @default(cuid())
-  username          String   @unique
   email             String   @unique
   password          String
   createdAt         DateTime @default(now())
@@ -32,7 +31,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  @@index([email, id, username])
+  @@index([email, id])
   @@map("user")
 }
 
@@ -51,6 +50,7 @@ model Note {
   tags NoteTag[]
 
   @@index([title, userId])
+	@@map("note")
 }
 
 model Tag {
@@ -58,6 +58,7 @@ model Tag {
   name String @unique
 
   notes NoteTag[]
+	@@map("tag")
 }
 
 model NoteTag {
@@ -68,6 +69,7 @@ model NoteTag {
   tag  Tag  @relation(fields: [tagId], references: [id])
 
   @@id([noteId, tagId])
+	@@map("noteTag")
 }
 
 model Session {

@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
-import 'dotenv/config';
-import { AuthModule } from './auth/auth.module';
-import { DatabaseModule } from './database/database.module';
+import { Module } from "@nestjs/common";
+import { UserModule } from "./user/user.module";
+import "dotenv/config";
+
+import { DatabaseModule } from "./database/database.module";
 
 @Module({
-  imports: [UserModule, AuthModule, DatabaseModule],
-  controllers: [],
-  providers: [],
+    imports: [AuthModule, DatabaseModule],
+    controllers: [],
+    providers: []
 })
 export class AppModule {}
