@@ -5,7 +5,10 @@ import {
     Body,
     Patch,
     Param,
-    Delete
+    Delete,
+    All,
+    Req,
+    Res
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { auth } from "../lib/auth";
@@ -16,6 +19,6 @@ export class AuthController {
 
     @All("*")
     async handler(@Req() req: Request, @Res() res: Response) {
-        return auth.handler(req, res);
+        return auth.handler(req);
     }
 }
