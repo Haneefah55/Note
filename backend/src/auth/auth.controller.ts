@@ -17,7 +17,7 @@ import { auth } from "../lib/auth";
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @All("*")
+    @All("{*path}")
     async handler(@Req() req: Request, @Res() res: Response) {
         return auth.handler(req);
     }

@@ -10,12 +10,9 @@ async function bootstrap() {
     app.setGlobalPrefix("api");
 
     // Configure CORS for credentials/cookies
-    /***
-	app.enableCors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    credentials: true,
-  });
-**/
+    
+	app.enableCors();
+
     // Re-enable json parsing for all non-auth routes
     app.use((req, res, next) => {
         if (req.originalUrl.startsWith("/api/auth")) {
@@ -23,6 +20,6 @@ async function bootstrap() {
         }
         express.json()(req, res, next);
     });
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 bootstrap();
